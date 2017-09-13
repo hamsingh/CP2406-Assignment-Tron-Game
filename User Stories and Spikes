@@ -1,1 +1,24 @@
+User Stories
+The user should be able to use the keyboard so that they can control the character.
+As a user I do not want to wait long periods of time for a game to start.
+As a user I want to connect to a server to view games I can join.
+As a user I want to send messages to the server so that I can chat to others.
+The user cannot travel beyond the grid.
+The user can speed up and slow down with designated keys.
+The user can change directions by 90 degrees with designated keys.
+A user is eliminated when they either hit their own or someone else’s light trial. 
 
+Spike
+As a user I want to use UDP to send and receive commands from the server.
+
+Process of Solving Spike
+Research the implementation of UDP and how it can be beneficial to the application.
+Select viable solution.
+Try to implement and test.
+Find best way to implement the buffer.
+
+Steps of Implementation
+Have information about character in a buffer to be sent by a sender class.
+Have information received be receiver class.
+After reading information decode the message to update the grid with new character information in real time.
+Have the game repeat this process.
