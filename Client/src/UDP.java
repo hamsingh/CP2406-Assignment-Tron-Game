@@ -1,9 +1,19 @@
+
+
 public class UDP {
-    public void Send()throws Exception {
+
+    public static void main(String[] args) {
 
     }
-    public String Receive()throws Exception {
 
-        return null;
+    public UDP(){
+
+    }
+
+    public void SendRequest()throws Exception {
+
+    }
+    public void Receive()throws Exception {
+
     }
 }
