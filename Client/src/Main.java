@@ -12,7 +12,7 @@ public class Main implements Runnable{
         frame.setBackground(Color.BLACK);
         frame.setMinimumSize(new Dimension(800, 800));
         //Dimension dMAX = frame.getMaximumSize();
-        frame.setPreferredSize(new Dimension(1200, 800));
+        frame.setPreferredSize(new Dimension(800, 1000));
 
         ////////////////
         // MAIN PANEL //
@@ -70,12 +70,15 @@ public class Main implements Runnable{
 
         // Panel for Play Menu Buttons
         final JPanel playButtons = new JPanel();
-        playButtons.setLayout(new GridLayout(1, 1));
+        playButtons.setLayout(new GridLayout(1, 3));
         playButtons.setBackground(Color.BLACK);
 
-
         // Add Play Menu Buttons
+        // buttons for playMenuUpper
+        final JButton joinButton = new JButton("JOIN");
+        playButtons.add(joinButton);
 
+        playMenu.add(playButtons, BorderLayout.CENTER);
 
         ////////////////////////
         // INSTRUCTIONS PANEL //
@@ -84,6 +87,30 @@ public class Main implements Runnable{
         instructionMenu.setLayout(new BorderLayout());
         instructionMenu.setBackground(Color.BLACK);
         // Display image as instructions page. with rules etc.
+
+        ///////////////
+        // JOIN MENU //
+        ///////////////
+        final JPanel testLevelMenu = new JPanel();
+        testLevelMenu.setLayout(new GridLayout(1,3));
+        testLevelMenu.setBackground(Color.BLACK);
+
+        // Score Label
+        final JLabel score = new JLabel("   Score: 0");
+        score.setForeground(Color.WHITE);
+        score.setBackground(Color.BLACK);
+        testLevelMenu.add(score);
+
+
+        // Restart and Exit Buttons
+        final JButton resetButton = new JButton("RESTART");
+        testLevelMenu.add(resetButton);
+        final JButton exitButton = new JButton("EXIT");
+        testLevelMenu.add(exitButton);
+
+        // Create Test Level
+        final Map testLevel = new Map(score, 1);
+        testLevel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
         /////////////////////
         // Action Listeners//
@@ -94,7 +121,7 @@ public class Main implements Runnable{
             public void actionPerformed(ActionEvent e) {
                 frame.remove(mainMenu);
                 frame.add(playMenu);
-                //frame.update(frame.getGraphics());
+                frame.update(frame.getGraphics());
                 playMenu.revalidate();
             }
         });
@@ -127,6 +154,34 @@ public class Main implements Runnable{
             }
         });
 
+        joinButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.remove(playMenu);
+                frame.setLayout(new BorderLayout());
+                frame.add(testLevel, BorderLayout.CENTER);
+                frame.add(testLevelMenu, BorderLayout.SOUTH);
+                frame.update(frame.getGraphics());
+                testLevel.requestFocusInWindow();
+                testLevel.revalidate();
+                testLevel.reset();
+            }
+        });
+
+        exitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.remove(testLevelMenu);
+                frame.remove(testLevel);
+                frame.add(mainMenu);
+                frame.update(frame.getGraphics());
+                mainMenu.revalidate();
+            }
+        });
+
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                testLevel.reset();
+            }
+        });
 
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

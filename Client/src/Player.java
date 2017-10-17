@@ -9,7 +9,7 @@ import java.util.ArrayList;
 public abstract class Player extends Object {
 
     // Player Attributes
-    Color color = Color.RED;
+    Color color;
     boolean alive = true;
     boolean jetWall = true;
 
@@ -17,11 +17,14 @@ public abstract class Player extends Object {
     int initialVelocity = 0;
     int velocity = 5; //Subject to change
 
+    static int HEIGHT = 5;
+    static int WIDTH = 5;
+
     // Player object's path
     ArrayList<Shape> lines = new ArrayList<Shape>();
 
-    public Player(int x, int y, int velocityX, int velocityY, int width, int height) {
-        super(x, y, velocityX, velocityY, width, height);
+    public Player(int x, int y, int velocityX, int velocityY, Color color) {
+        super(x, y, velocityX, velocityY, WIDTH, HEIGHT);
         this.color = color;
     }
 
@@ -30,67 +33,32 @@ public abstract class Player extends Object {
         jetWall = false;
     }
 
-    public void move() {
-        int a = x;
-        int b = y;
+    public abstract void move();
 
-        if (jetWall) {
-            x += velocityX;
-            y += velocityY;
-            if (lines.size() > 1) {
-                Shape l1 = lines.get(lines.size() - 2);
-                Shape l2 = lines.get(lines.size() - 1);
-                if (a == l1.getStartX() && l1.getEndY() == l2.getStartY()) {
-                    lines.add(new Line(l1.getStartX(), l1.getStartY(), l2.getEndX(), l2.getEndY()));
-                    lines.remove(lines.size() - 2);
-                    lines.remove(lines.size() - 2);
-                }
-                else if (b == l1.getStartY() && l1.getEndX() == l2.getStartX()) {
-                    lines.add(new Line(l1.getStartX(), l1.getStartY(), l2.getEndX(), l2.getEndY()));
-                    lines.remove(lines.size() - 2);
-                    lines.remove(lines.size() - 2);
-                }
-            }
-            lines.add(new Line(a, b, x, y));
+    // Draws Players and Jetwall
+    public void draw(Graphics g) {
+        g.setColor(color);
+        g.fillRect(x - WIDTH/2, y - HEIGHT/2, WIDTH, HEIGHT);
+        for (Shape k: lines) {
+            k.draw(g);
         }
-        else {
-            jetWall = true;
-        }
-
     }
 
-    public static void Accelerate() {
-
+    public boolean getAlive() {
+        return alive;
     }
 
-    public static void Velocity() {
-
+    public ArrayList<Shape> getPath() {
+        return lines;
     }
 
-    public void keyPressed(KeyEvent e) {
-        if (alive) {
+    // checks if the Player has crashed with a path
+    public void crash(Intersection i) {
+        if (i == Intersection.UP) {
+            velocityX = 0;
+            velocityY = 0;
+            alive = false;
         }
-        else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            setVelocityX(-5);
-            setVelocityY(0);
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            setVelocityX(5);
-            setVelocityY(0);
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_UP) {
-            setVelocityX(0);
-            setVelocityY(5);
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            setVelocityX(0);
-            setVelocityY(-5);
-        }
-        else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-            setjetWall();
-        }
-    }
-    public void keyReleased(KeyEvent e) {
     }
 }
 
