@@ -31,8 +31,9 @@ public abstract class Object {
     }
 
     public void setVelocityX(int velocityX) {
-        if (!(this.velocityX > 0 && velocityX < 0))
+        if (!(velocityX > 0 && this.velocityX < 0) && !(velocityX < 0 && this.velocityX > 0))
             this.velocityX = velocityX;
+        /*
         else if (!(this.velocityX < 5 && velocityX > 0))
             this.velocityX = velocityX + deltaSpeed;
         else if (!(this.velocityX < 5 && velocityX > 0))
@@ -41,11 +42,13 @@ public abstract class Object {
             this.velocityX = velocityX;
         else if (!(this.velocityX < 5 && velocityX > 0))
             this.velocityX = velocityX;
+        */
     }
 
     public void setVelocityY(int velocityY) {
-        if (!(this.velocityY > 0 && velocityY < 0))
+        if (!(velocityY > 0 && this.velocityY < 0) && !(velocityY < 0 && this.velocityY > 0))
             this.velocityY = velocityY;
+        /*
         else if (!(this.velocityY < 5 && velocityY > 0))
             this.velocityY = velocityY + deltaSpeed;
         else if (!(this.velocityY < 5 && velocityY > 0))
@@ -54,6 +57,7 @@ public abstract class Object {
             this.velocityY = velocityY;
         else if (!(this.velocityY < 5 && velocityY > 0))
             this.velocityY = velocityY;
+        */
     }
 
     public void setBoundary(int xBoundary, int yBoundary) {
@@ -93,11 +97,20 @@ public abstract class Object {
         return Intersection.NONE;
     }
 
-    // Move Player
-    public abstract void move();
+    // Move the object at the given velocity.
+    public void move() {
+        x += velocityX;
+        y += velocityY;
+
+        //accelerate();
+        clip();
+    }
 
     // Accelerate Player
     public abstract void accelerate();
+
+    // Check if player is in bounds
+    public abstract void clip();
 
     // Draws Shapes
     public abstract void draw(Graphics g);

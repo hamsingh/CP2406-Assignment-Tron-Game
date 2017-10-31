@@ -33,6 +33,30 @@ public abstract class Player extends Object {
         jetWall = false;
     }
 
+    // Accelerates player
+    public void accelerate() {
+        if (!(this.velocityX < 0 || this.velocityX > 10))
+            this.velocityX = this.velocityX++;
+        else if (!(this.velocityY < 0 || this.velocityY > 10))
+            this.velocityY = this.velocityY++;
+        else if (this.velocityX > 10)
+            this.velocityX = this.velocityX--;
+        else if (!(this.velocityY < 10 || this.velocityY > 0))
+            this.velocityY = this.velocityY--;
+    }
+
+    // changes state of Player if it exits the bounds
+    public void clip() {
+        if (x < 0 || x > width) {
+            velocityX = 0;
+            alive = false;
+        }
+        if (y < 0 || y > height) {
+            velocityY = 0;
+            alive = false;
+        }
+    }
+
     public abstract void move();
 
     // Draws Players and Jetwall

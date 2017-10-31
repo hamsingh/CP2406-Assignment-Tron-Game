@@ -54,21 +54,24 @@ public class Map extends JComponent{
                 if (!player.getAlive()) {
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
+                    player.accelerate();
                     player.setVelocityX(-5);
                     player.setVelocityY(0);
-                    //
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    player.accelerate();
                     player.setVelocityX(5);
                     player.setVelocityY(0);
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    player.setVelocityX(0);
-                    player.setVelocityY(5);
-                }
-                else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    player.accelerate();
                     player.setVelocityX(0);
                     player.setVelocityY(-5);
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
+                    player.accelerate();
+                    player.setVelocityX(0);
+                    player.setVelocityY(5);
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
                     player.setjetWall();
@@ -116,14 +119,12 @@ public class Map extends JComponent{
 
     // moves the game by one timestamp
     void tick(){
-        for (Player k: players) {
-            if (k != null) {
-                k.setBoundary(getWidth(), getHeight());
-                k.move();
-                //k.draw(Graphics);
-                //paintComponent(Graphic g);
-            }
-        }
+        //for (Player k: players) {
+            //if (k != null) {
+        player.setBoundary(getWidth(), getHeight());
+        player.move();
+            //}
+        //}
         /*for (Player k1: players) {
             for (Player k2: players) {
                 //k1.crash(k1.intersects(k2));
@@ -183,6 +184,7 @@ public class Map extends JComponent{
         super.paintComponent(g);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, MAPWIDTH, MAPHEIGHT);
+        player.draw(g);
         for (Player p: players) {
             if (p != null) {
                 p.draw(g);
