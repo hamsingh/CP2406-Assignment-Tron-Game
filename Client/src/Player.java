@@ -23,8 +23,8 @@ public abstract class Player extends Object {
     // Player object's path
     ArrayList<Shape> lines = new ArrayList<Shape>();
 
-    public Player(int x, int y, int velocityX, int velocityY, Color color) {
-        super(x, y, velocityX, velocityY, WIDTH, HEIGHT);
+    public Player(int randX, int randY, int velocityX, int velocityY, Color color) {
+        super(randX, randY, velocityX, velocityY, WIDTH, HEIGHT);
         this.color = color;
     }
 
@@ -34,16 +34,16 @@ public abstract class Player extends Object {
     }
 
     // Accelerates player
-    public void accelerate() {
+    /*public void accelerate() {
         if (!(this.velocityX < 0 || this.velocityX > 10))
             this.velocityX = this.velocityX++;
         else if (!(this.velocityY < 0 || this.velocityY > 10))
             this.velocityY = this.velocityY++;
         else if (this.velocityX > 10)
-            this.velocityX = this.velocityX--;
-        else if (!(this.velocityY < 10 || this.velocityY > 0))
-            this.velocityY = this.velocityY--;
-    }
+            this.velocityX = 10;
+        else if (this.velocityY > 10)
+            this.velocityY = 10;
+    }*/
 
     // changes state of Player if it exits the bounds
     public void clip() {
@@ -84,5 +84,8 @@ public abstract class Player extends Object {
             alive = false;
         }
     }
+
+    // adds Player objects to the field
+    abstract void addPlayers(Player[] players);
 }
 

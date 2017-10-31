@@ -2,8 +2,13 @@ import java.awt.Color;
 
 public class LocalPlayer extends Player {
 
-    public LocalPlayer(int x, int y, int velocityX, int velocityY, Color color){
-        super(x, y, velocityX, velocityY, color);
+    public LocalPlayer(int randX, int randY, int velocityX, int velocityY, Color color){
+        super(randX, randY, velocityX, velocityY, color);
+    }
+
+    // does nothing because human players can see screen
+    // only needed for AI, but required for abstract class
+    public void addPlayers(Player[] players) {
     }
 
     public void move() {
@@ -30,7 +35,16 @@ public class LocalPlayer extends Player {
             lines.add(new Line(a, b, x, y));
         }
         else {
-            jetWall = false;
+            if (velocityX > 0) {
+                //x += JUMPHEIGHT;
+            } else if (velocityX < 0) {
+                //x -= JUMPHEIGHT;
+            } else if (velocityY > 0) {
+                //y += JUMPHEIGHT;
+            } else if (velocityY < 0) {
+                //y -= JUMPHEIGHT;
+            }
+            jetWall = true;
         }
 
     }

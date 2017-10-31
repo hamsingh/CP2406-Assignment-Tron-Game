@@ -1,9 +1,20 @@
 import java.awt.Color;
+import java.util.Random;
 
 public class OnlinePlayer extends Player {
 
+    private Player[] players = new Player[1];
+
+    private Random rand = new Random();
+
     public OnlinePlayer(int x, int y, int velocityX, int velocityY, Color color){
         super(x, y, velocityX, velocityY, color);
+    }
+
+    // does nothing because human players can see screen
+    // only needed for AI, but required for abstract class
+    public void addPlayers(Player[] players) {
+        this.players = players;
     }
 
     public void move() {
