@@ -2,12 +2,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
 import javax.swing.*;
-
+import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class Map extends JComponent{
     LocalPlayer player; //= new LocalPlayer(200,200,0,0,Color.RED);
-    Player[] players;
+    //Player[] players;
+    ArrayList<Player> players = new ArrayList<>();
     Color[] colors = {Color.CYAN, Color.PINK, Color.WHITE, Color.YELLOW,
             Color.BLUE, Color.ORANGE, Color.RED, Color.GREEN};
 
@@ -35,7 +36,7 @@ public class Map extends JComponent{
         if (p > 8) {
             p = 8;
         }
-        this.players = new OnlinePlayer[p];
+        //this.players = new OnlinePlayer[p]; TODO: PUT BACK IN
         this.score1 = sco1;
 
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
@@ -122,18 +123,14 @@ public class Map extends JComponent{
 
     // moves the game by one timestamp
     void tick(){
-        for (Player k: players) {
-            if (k == null) {
-                startGame();
-            }
+        if(players.isEmpty()) {
+            startGame();
         }
-        for (Player k: players) {
-            if (k == null) {
-                player.setBoundary(getWidth(), getHeight());
-                player.move();
-                //addPlayers();
-                //player.clip();
-            }
+        for (int i = 0; i < players.size(); ++i) {
+            players.get(i).setBoundary(getWidth(), getHeight());
+            players.get(i).move();
+            //addPlayers();
+            //player.clip();
         }
         /*for (Player k1: players) {
             for (Player k2: players) {
@@ -168,8 +165,8 @@ public class Map extends JComponent{
 
     // initializes all new characters and restarts the timer
     public void reset() {
-        int[] start = getRandomStart();
-        player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0]);
+        //int[] start = getRandomStart();
+        //player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0]);
         /*int[] start = getRandomStart();
         LocalPlayer player;
         players[0] = player;
@@ -183,15 +180,16 @@ public class Map extends JComponent{
     public void startGame(){
         int[] start = getRandomStart();
         player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0]);
-        players[0] = player;
+        //players[0] = player; TODO: PUT BACK IN
+        players.add(player);
     }
 
     // changes the score being displayed
     public void setScore(){
-        score1.setText("     Score: " + i +
-                "    Level: " + (players.length - 1));
-        //score2.setText("             Boost: " + localPlayer.getBoostsLeft());
-        score1.repaint();
+//        score1.setText("     Score: " + i +
+//                "    Level: " + (players.length - 1));
+//        //score2.setText("             Boost: " + localPlayer.getBoostsLeft());
+//        score1.repaint();
     }
 
     // updates the player's score after successfully completing a level
@@ -225,18 +223,18 @@ public class Map extends JComponent{
     }
 
     public void addPlayers() {
-        int[] start = getRandomStart();
-        LocalPlayer player = new LocalPlayer(
-                start[0], start[1], start[2], start[3], colors[0]);
-        players[0] = player;
-        for (int j = 1; j < players.length; j++) {
-            start = getRandomStart();
-            players[j] = new OnlinePlayer(start[0], start[1],
-                    start[2], start[3], colors[j]);
-        }
-        for (Player p: players) {
-            p.addPlayers(players);
-        }
+//        int[] start = getRandomStart();
+//        LocalPlayer player = new LocalPlayer(
+//                start[0], start[1], start[2], start[3], colors[0]);
+//        players[0] = player;
+//        for (int j = 1; j < players.length; j++) {
+//            start = getRandomStart();
+//            players[j] = new OnlinePlayer(start[0], start[1],
+//                    start[2], start[3], colors[j]);
+//        }
+//        for (Player p: players) {
+//            p.addPlayers(players);
+//        }
     }
 
     // sets the dimensions of the court
