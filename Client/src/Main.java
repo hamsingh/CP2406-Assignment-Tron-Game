@@ -109,7 +109,7 @@ public class Main implements Runnable{
         testLevelMenu.add(exitButton);
 
         // Create Test Level
-        final Map testLevel = new Map(score, 1);
+        final Map testLevel = new Map(score);
         testLevel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
         /////////////////////
@@ -186,6 +186,8 @@ public class Main implements Runnable{
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+
+        testLevel.reset();
     }
         public static void main(String[] args){
             SwingUtilities.invokeLater(new Main());

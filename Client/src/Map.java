@@ -14,6 +14,11 @@ public class Map extends JComponent{
 
     Random rand = new Random();
 
+    // UPD
+    int PORT = 49152;
+    String ADDRESS = "228.5.6.7";
+    String NAME = "Harmon"; //TODO: get name input before joining game
+
     // court dimensions
     int MAPWIDTH = 800;
     int MAPHEIGHT = 800;
@@ -31,11 +36,9 @@ public class Map extends JComponent{
     boolean run = true;
 
     // constructor adds KeyListeners and initializes fields
-    public Map(JLabel sco1, int p) {
+    public Map(JLabel sco1) {
         setBackground(Color.WHITE);
-        if (p > 8) {
-            p = 8;
-        }
+
         //this.players = new OnlinePlayer[p]; TODO: PUT BACK IN
         this.score1 = sco1;
 
@@ -45,8 +48,12 @@ public class Map extends JComponent{
         // timer that runs the game
         time = new Timer(interval, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                tick();
-                //startGame();
+                try {
+                    tick();
+                }
+                catch(Exception error){
+                    System.out.println("Error with tick Exception");
+                }
             }
         });
         time.start();
@@ -61,6 +68,7 @@ public class Map extends JComponent{
                     //player.accelerate();
                     player.setVelocityX(-1);
                     player.setVelocityY(0);
+
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
                     //player.accelerate();
@@ -86,6 +94,9 @@ public class Map extends JComponent{
             }
         });
     }
+
+
+
 
     // returns an array of velocities and dimensions for a Player
     // ensures that the Player moves toward the center initially
@@ -122,7 +133,7 @@ public class Map extends JComponent{
     }
 
     // moves the game by one timestamp
-    void tick(){
+    void tick() throws Exception{
         if(players.isEmpty()) {
             startGame();
         }
@@ -177,11 +188,17 @@ public class Map extends JComponent{
     }
 
     // Starts game add players etc.
-    public void startGame(){
+    public void startGame() throws Exception{
         int[] start = getRandomStart();
         player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0]);
         //players[0] = player; TODO: PUT BACK IN
         players.add(player);
+        /*Network multi = new Network(PORT);
+        multi.sendRequest(NAME,"READY", PORT);
+        while (!run)
+            multi.receiveCommand(PORT);
+            //if (buffer == "START") TODO: try get buffer from network to process string
+*/
     }
 
     // changes the score being displayed
@@ -235,6 +252,11 @@ public class Map extends JComponent{
 //        for (Player p: players) {
 //            p.addPlayers(players);
 //        }
+    }
+
+    public void ProcessCommands(){
+        //Message Format: name,x,y,wall
+
     }
 
     // sets the dimensions of the court
