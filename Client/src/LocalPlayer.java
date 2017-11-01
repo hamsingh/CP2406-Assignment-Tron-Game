@@ -6,8 +6,8 @@ public class LocalPlayer extends Player {
         super(randX, randY, velocityX, velocityY, color);
     }
 
-    // does nothing because human players can see screen
-    // only needed for AI, but required for abstract class
+    // does nothing because local player can see screen
+    // only needed for online players, but required for abstract class
     public void addPlayers(Player[] players) {
     }
 

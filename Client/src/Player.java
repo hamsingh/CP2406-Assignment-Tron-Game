@@ -8,29 +8,36 @@ import java.util.ArrayList;
 
 public abstract class Player extends Object {
 
-    // Player Attributes
+    // Player States
     Color color;
     boolean alive = true;
     boolean jetWall = true;
 
     // Initial Conditions
-    int initialVelocity = 0;
-    int velocity = 5; //Subject to change
+    int initialVelocity = 5;
 
+    // Player Height and Width
     static int HEIGHT = 5;
     static int WIDTH = 5;
 
-    // Player object's path
+    // Player Path
     ArrayList<Shape> lines = new ArrayList<Shape>();
 
+    // Default Constructor
     public Player(int randX, int randY, int velocityX, int velocityY, Color color) {
         super(randX, randY, velocityX, velocityY, WIDTH, HEIGHT);
+        initialVelocity = Math.max(Math.abs(velocityX), Math.abs(velocityY));
         this.color = color;
     }
 
     // Changes State of Players Jet Wall
     public void setjetWall() {
-        jetWall = false;
+        if (jetWall) {
+            jetWall = false;
+        }
+        if (!jetWall) {
+            jetWall = true;
+        }
     }
 
     // Accelerates player
@@ -45,7 +52,7 @@ public abstract class Player extends Object {
             this.velocityY = 10;
     }*/
 
-    // changes state of Player if it exits the bounds
+    // Changes Player State if it Exits Map Boundary
     public void clip() {
         if (x < 0 || x > width) {
             velocityX = 0;
@@ -57,14 +64,17 @@ public abstract class Player extends Object {
         }
     }
 
+    // Move Player, Local and Online Players differ so method is not initiated here
     public abstract void move();
 
-    // Draws Players and Jetwall
+    // Draws Players and Jetwall if true
     public void draw(Graphics g) {
         g.setColor(color);
         g.fillRect(x - WIDTH/2, y - HEIGHT/2, WIDTH, HEIGHT);
-        for (Shape k: lines) {
-            k.draw(g);
+        if (jetWall){
+            for (Shape k: lines) {
+                k.draw(g);
+            }
         }
     }
 

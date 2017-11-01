@@ -1,11 +1,12 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.util.Random;
-
 import javax.swing.*;
+
+
 @SuppressWarnings("serial")
 public class Map extends JComponent{
-    LocalPlayer player = new LocalPlayer(200,200,0,0,Color.RED);
+    LocalPlayer player; //= new LocalPlayer(200,200,0,0,Color.RED);
     Player[] players;
     Color[] colors = {Color.CYAN, Color.PINK, Color.WHITE, Color.YELLOW,
             Color.BLUE, Color.ORANGE, Color.RED, Color.GREEN};
@@ -25,7 +26,7 @@ public class Map extends JComponent{
 
     // the game timer and speed at which tick() is called
     int interval = 20;
-    Timer timer;
+    Timer time;
     boolean run = true;
 
     // constructor adds KeyListeners and initializes fields
@@ -41,12 +42,14 @@ public class Map extends JComponent{
         setFocusable(true);
 
         // timer that runs the game
-        timer = new Timer(interval, new ActionListener() {
+        time = new Timer(interval, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 tick();
+                //startGame();
             }
         });
-        timer.start();
+        time.start();
+
 
         // player one controls
         addKeyListener(new KeyAdapter() {
@@ -54,24 +57,24 @@ public class Map extends JComponent{
                 if (!player.getAlive()) {
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    player.accelerate();
-                    player.setVelocityX(-5);
+                    //player.accelerate();
+                    player.setVelocityX(-1);
                     player.setVelocityY(0);
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    player.accelerate();
-                    player.setVelocityX(5);
+                    //player.accelerate();
+                    player.setVelocityX(1);
                     player.setVelocityY(0);
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    player.accelerate();
+                    //player.accelerate();
                     player.setVelocityX(0);
-                    player.setVelocityY(-5);
+                    player.setVelocityY(-1);
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    player.accelerate();
+                    //player.accelerate();
                     player.setVelocityX(0);
-                    player.setVelocityY(5);
+                    player.setVelocityY(1);
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
                     player.setjetWall();
@@ -119,12 +122,19 @@ public class Map extends JComponent{
 
     // moves the game by one timestamp
     void tick(){
-        //for (Player k: players) {
-            //if (k != null) {
-        player.setBoundary(getWidth(), getHeight());
-        player.move();
-            //}
-        //}
+        for (Player k: players) {
+            if (k == null) {
+                startGame();
+            }
+        }
+        for (Player k: players) {
+            if (k == null) {
+                player.setBoundary(getWidth(), getHeight());
+                player.move();
+                //addPlayers();
+                //player.clip();
+            }
+        }
         /*for (Player k1: players) {
             for (Player k2: players) {
                 //k1.crash(k1.intersects(k2));
@@ -158,13 +168,22 @@ public class Map extends JComponent{
 
     // initializes all new characters and restarts the timer
     public void reset() {
+        int[] start = getRandomStart();
+        player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0]);
         /*int[] start = getRandomStart();
         LocalPlayer player;
         players[0] = player;
             i = 0;
-            timer.start();
+            time.start();
             requestFocusInWindow();
         */
+    }
+
+    // Starts game add players etc.
+    public void startGame(){
+        int[] start = getRandomStart();
+        player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0]);
+        players[0] = player;
     }
 
     // changes the score being displayed
@@ -175,8 +194,21 @@ public class Map extends JComponent{
         score1.repaint();
     }
 
-    // adds scores to high scores or sets the score after a level
-    //abstract void addScore();
+    // updates the player's score after successfully completing a level
+    public void addScore() {
+        /*if (player.getAlive()) {
+            i += 50 * (players.length - 1);
+            //win = true;
+            time = new Timer(interval, new ActionListener() {
+                public void actionPerformed(ActionEvent e) {
+                    addPlayers();
+                }
+            });
+            time.start();
+        } else {
+            //over = true;
+        }*/
+    }
 
     // draws the Player objects
     @Override
@@ -197,14 +229,14 @@ public class Map extends JComponent{
         LocalPlayer player = new LocalPlayer(
                 start[0], start[1], start[2], start[3], colors[0]);
         players[0] = player;
-        /*for (int j = 1; j < players.length; j++) {
+        for (int j = 1; j < players.length; j++) {
             start = getRandomStart();
-            players[j] = new PlayerAI(start[0], start[1],
+            players[j] = new OnlinePlayer(start[0], start[1],
                     start[2], start[3], colors[j]);
         }
         for (Player p: players) {
             p.addPlayers(players);
-        }*/
+        }
     }
 
     // sets the dimensions of the court

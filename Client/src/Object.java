@@ -19,7 +19,7 @@ public abstract class Object {
     int yBoundary;
 
     // Speed Increment
-    int deltaSpeed = 5;
+    int deltaSpeed = 1;
 
     public Object(int x, int y, int velocityX, int velocityY, int width, int height){
         this.x = x;
@@ -31,8 +31,22 @@ public abstract class Object {
     }
 
     public void setVelocityX(int velocityX) {
-        if (!(velocityX > 0 && this.velocityX < 0) && !(velocityX < 0 && this.velocityX > 0))
-            this.velocityX = velocityX;
+        if (this.velocityX < 0 && velocityX > 0)
+            this.velocityX = this.velocityX++;
+        else if (this.velocityX < 0 && velocityX < 0)
+            this.velocityX = this.velocityX--;
+        if (this.velocityX > -2 && this.velocityX < 0)
+            this.velocityX = -2;
+        else if (this.velocityX < -10 && this.velocityX > -12)
+            this.velocityX = -10;
+        if (this.velocityX > 0 && velocityX > 0)
+            this.velocityX = this.velocityX++;
+        else if (this.velocityX > 0 && velocityX < 0)
+            this.velocityX = this.velocityX--;
+        if (this.velocityX < 2 && this.velocityX > 0)
+            this.velocityX = 2;
+        else if (this.velocityX > 10 && this.velocityX < 12)
+            this.velocityX = 10;
         /*
         else if (!(this.velocityX < 5 && velocityX > 0))
             this.velocityX = velocityX + deltaSpeed;
@@ -46,8 +60,23 @@ public abstract class Object {
     }
 
     public void setVelocityY(int velocityY) {
-        if (!(velocityY > 0 && this.velocityY < 0) && !(velocityY < 0 && this.velocityY > 0))
-            this.velocityY = velocityY;
+        if (this.velocityY < 0 && velocityY > 0)
+            this.velocityY = this.velocityY++;
+        else if (this.velocityY < 0 && velocityY < 0)
+            this.velocityY = this.velocityY--;
+        if (this.velocityY > -2 && this.velocityY < 0)
+            this.velocityY = -2;
+        else if (this.velocityY < -10 && this.velocityY > -12)
+            this.velocityY = -10;
+        if (this.velocityY > 0 && velocityY > 0)
+            this.velocityY = this.velocityY++;
+        else if (this.velocityY > 0 && velocityY < 0)
+            this.velocityY = this.velocityY--;
+        if (this.velocityY < 2 && this.velocityY > 0)
+            this.velocityY = 2;
+        else if (this.velocityY > 10 && this.velocityY < 12)
+            this.velocityY = 10;
+
         /*
         else if (!(this.velocityY < 5 && velocityY > 0))
             this.velocityY = velocityY + deltaSpeed;
@@ -107,7 +136,7 @@ public abstract class Object {
     }
 
     // Accelerate Player
-    public abstract void accelerate();
+    //public abstract void accelerate();
 
     // Check if player is in bounds
     public abstract void clip();
