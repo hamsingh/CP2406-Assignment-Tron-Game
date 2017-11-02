@@ -24,8 +24,8 @@ public abstract class Player extends Object {
     ArrayList<Shape> lines = new ArrayList<Shape>();
 
     // Default Constructor
-    public Player(int randX, int randY, int velocityX, int velocityY, Color color) {
-        super(randX, randY, velocityX, velocityY, WIDTH, HEIGHT);
+    public Player(int randX, int randY, int velocityX, int velocityY, Color color, String DIR) {
+        super(randX, randY, velocityX, velocityY, WIDTH, HEIGHT, DIR);
         initialVelocity = Math.max(Math.abs(velocityX), Math.abs(velocityY));
         this.color = color;
     }
@@ -76,6 +76,14 @@ public abstract class Player extends Object {
                 k.draw(g);
             }
         }
+    }
+
+    public void setDirection(String Direction) {
+        DIR = Direction;
+    }
+
+    public String getDirection(){
+        return this.DIR;
     }
 
     public boolean getAlive() {
