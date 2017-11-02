@@ -7,8 +7,8 @@ public class OnlinePlayer extends Player {
 
     private Random rand = new Random();
 
-    public OnlinePlayer(int x, int y, int velocityX, int velocityY, Color color){
-        super(x, y, velocityX, velocityY, color);
+    public OnlinePlayer(int x, int y, int velocityX, int velocityY, Color color, String DIR){
+        super(x, y, velocityX, velocityY, color, DIR);
     }
 
     // does nothing because human players can see screen
