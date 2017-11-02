@@ -17,7 +17,8 @@ public class Map extends JComponent{
     // UPD
     int PORT = 49152;
     String ADDRESS = "228.5.6.7";
-    String NAME = "Harmon"; //TODO: get name input before joining game
+    String NAME;
+    String DIR;
 
     // court dimensions
     int MAPWIDTH = 800;
@@ -36,11 +37,12 @@ public class Map extends JComponent{
     boolean run = true;
 
     // constructor adds KeyListeners and initializes fields
-    public Map(JLabel sco1) {
+    public Map(JLabel sco1, String name) {
         setBackground(Color.WHITE);
 
         //this.players = new OnlinePlayer[p]; TODO: PUT BACK IN
         this.score1 = sco1;
+        this.NAME = name;
 
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
         setFocusable(true);
@@ -52,7 +54,7 @@ public class Map extends JComponent{
                     tick();
                 }
                 catch(Exception error){
-                    System.out.println("Error with tick Exception");
+                    System.out.println("Error with Tick Exception");
                 }
             }
         });
@@ -64,29 +66,34 @@ public class Map extends JComponent{
             public void keyPressed(KeyEvent e) {
                 if (!player.getAlive()) {
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-                    //player.accelerate();
+                else if (e.getKeyCode() == KeyEvent.VK_LEFT && player.getDirection() != "RIGHT") {
                     player.setVelocityX(-1);
                     player.setVelocityY(0);
-
+                    player.setDirection("LEFT");
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-                    //player.accelerate();
+                else if (e.getKeyCode() == KeyEvent.VK_RIGHT && player.getDirection() != "LEFT") {
                     player.setVelocityX(1);
                     player.setVelocityY(0);
+                    player.setDirection("RIGHT");
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_UP) {
-                    //player.accelerate();
+                else if (e.getKeyCode() == KeyEvent.VK_UP && player.getDirection() != "DOWN") {
                     player.setVelocityX(0);
                     player.setVelocityY(-1);
+                    player.setDirection("UP");
                 }
-                else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-                    //player.accelerate();
+                else if (e.getKeyCode() == KeyEvent.VK_DOWN && player.getDirection() != "UP") {
                     player.setVelocityX(0);
                     player.setVelocityY(1);
+                    player.setDirection("DOWN");
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
                     player.setjetWall();
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_W) {
+                    player.accelerate(1);
+                }
+                else if (e.getKeyCode() == KeyEvent.VK_S) {
+                    player.accelerate(-1);
                 }
             }
 
@@ -101,29 +108,35 @@ public class Map extends JComponent{
     // returns an array of velocities and dimensions for a Player
     // ensures that the Player moves toward the center initially
     public int[] getRandomStart() {
-        int[] start = new int[4];
+        int[] start = new int[5];
+        int direction;
         int xnew = 50 + rand.nextInt(600);
         int ynew = 50 + rand.nextInt(600);
         int ra = rand.nextInt(2);
         int velx = 0;
         int vely = 0;
         if (ra == 0) {
-            if (xnew < 250) {
+            if (xnew < 400) {
                 velx = VELOCITY;
+                direction = 1;
             } else {
                 velx = -VELOCITY;
+                direction = 2;
             }
         } else {
-            if (ynew < 250) {
+            if (ynew < 400) {
                 vely = VELOCITY;
+                direction = 3;
             } else {
                 vely = -VELOCITY;
+                direction = 4;
             }
         }
         start[0] = xnew;
         start[1] = ynew;
         start[2] = velx;
         start[3] = vely;
+        start[4] = direction;
         return start;
     }
 
@@ -190,9 +203,18 @@ public class Map extends JComponent{
     // Starts game add players etc.
     public void startGame() throws Exception{
         int[] start = getRandomStart();
-        player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0]);
+        if (start[4] == 1)
+            DIR = "RIGHT";
+        else if (start[4] == 2)
+            DIR = "LEFT";
+        else if (start[4] == 3)
+            DIR = "UP";
+        else if (start[4] == 4)
+            DIR = "DOWN";
+        player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0], NAME, DIR);
         //players[0] = player; TODO: PUT BACK IN
         players.add(player);
+        //runNetwork();
         /*Network multi = new Network(PORT);
         multi.sendRequest(NAME,"READY", PORT);
         while (!run)
@@ -200,6 +222,11 @@ public class Map extends JComponent{
             //if (buffer == "START") TODO: try get buffer from network to process string
 */
     }
+
+//    public void runNetwork(){
+//        NetworkWorker receive = new NetworkWorker(PORT);
+//        receive.start();
+//    }
 
     // changes the score being displayed
     public void setScore(){
@@ -231,7 +258,9 @@ public class Map extends JComponent{
         super.paintComponent(g);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, MAPWIDTH, MAPHEIGHT);
-        player.draw(g);
+        if (player != null) {
+            player.draw(g);
+        }
         for (Player p: players) {
             if (p != null) {
                 p.draw(g);
