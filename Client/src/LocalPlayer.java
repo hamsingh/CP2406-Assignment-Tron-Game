@@ -1,9 +1,11 @@
 import java.awt.Color;
 
 public class LocalPlayer extends Player {
+    String NAME;
 
-    public LocalPlayer(int randX, int randY, int velocityX, int velocityY, Color color){
-        super(randX, randY, velocityX, velocityY, color);
+    public LocalPlayer(int randX, int randY, int velocityX, int velocityY, Color color, String NAME, String DIR){
+        super(randX, randY, velocityX, velocityY, color, DIR);
+        this.NAME = NAME;
     }
 
     // does nothing because local player can see screen
