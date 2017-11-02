@@ -5,6 +5,9 @@ import javax.swing.*;
 
 public class Main implements Runnable{
 
+    String userName;
+    final JTextField name = new JTextField("Please Enter Your Name");
+    Map testLevel;
 
     public void run() {
         // Main Frame
@@ -77,6 +80,8 @@ public class Main implements Runnable{
         // buttons for playMenuUpper
         final JButton joinButton = new JButton("JOIN");
         playButtons.add(joinButton);
+        // Input Name
+        playButtons.add(name);
 
         playMenu.add(playButtons, BorderLayout.CENTER);
 
@@ -108,9 +113,6 @@ public class Main implements Runnable{
         final JButton exitButton = new JButton("EXIT");
         testLevelMenu.add(exitButton);
 
-        // Create Test Level
-        final Map testLevel = new Map(score);
-        testLevel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
 
         /////////////////////
         // Action Listeners//
@@ -156,14 +158,22 @@ public class Main implements Runnable{
 
         joinButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                frame.remove(playMenu);
-                frame.setLayout(new BorderLayout());
-                frame.add(testLevel, BorderLayout.CENTER);
-                frame.add(testLevelMenu, BorderLayout.SOUTH);
-                frame.update(frame.getGraphics());
-                testLevel.requestFocusInWindow();
-                testLevel.revalidate();
-                testLevel.reset();
+                if (getName() != "") {
+                    testLevel = new Map(score, userName);
+                    // Create Test Level
+                    testLevel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+                    frame.remove(playMenu);
+                    frame.setLayout(new BorderLayout());
+                    frame.add(testLevel, BorderLayout.CENTER);
+                    frame.add(testLevelMenu, BorderLayout.SOUTH);
+                    frame.update(frame.getGraphics());
+                    testLevel.requestFocusInWindow();
+                    testLevel.revalidate();
+                    testLevel.reset();
+                }
+                else {
+                    JOptionPane.showMessageDialog(frame, "Please Enter Name");
+                }
             }
         });
 
@@ -186,11 +196,14 @@ public class Main implements Runnable{
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-
-        testLevel.reset();
     }
+
         public static void main(String[] args){
             SwingUtilities.invokeLater(new Main());
+        }
+
+        public String getName(){
+            return userName = name.getText();
         }
 }
 
