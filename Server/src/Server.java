@@ -15,7 +15,8 @@ public class Server {
     public void main(String[] args) throws Exception {
         server = new Network("238.254.254.254", 45565);
         int numberPlayers = Integer.parseInt(JOptionPane.showInputDialog("Input Number of Players"));
-        for (int i = 0; i < numberPlayers; i++) {
+        int i;
+        for (i = 0; i < numberPlayers; i++) {
             String message = server.read();
             if (message.startsWith("Add Player")) {
                 String[] attributes = message.split(",");
@@ -33,6 +34,12 @@ public class Server {
                 }
             }
         }
+        if (i == numberPlayers) {
+            server.broadcast("PLAYERS");
+            for (int wait = 0; wait < 100; wait++);
+            server.broadcast(players.toString());
+        }
+
         server.broadcast("START");
         System.out.println("Game Running");
         read.start();
