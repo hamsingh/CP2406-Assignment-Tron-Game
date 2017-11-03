@@ -34,90 +34,32 @@ public abstract class Object {
         this.DIR = direction;
     }
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
     public void setVelocityX(int velocityX) {
         if (!(velocityX > 0 && this.velocityX < 0) && !(velocityX < 0 && this.velocityX > 0)) {
             this.velocityX = velocityX;
         }
-        /*
-        if (this.velocityX < 0 && velocityX > 0)
-            this.velocityX = this.velocityX++;
-        else if (this.velocityX < 0 && velocityX < 0)
-            this.velocityX = this.velocityX--;
-        if (this.velocityX > -2 && this.velocityX < 0)
-            this.velocityX = -2;
-        else if (this.velocityX < -10 && this.velocityX > -12)
-            this.velocityX = -10;
-        if (this.velocityX > 0 && velocityX > 0)
-            this.velocityX = this.velocityX++;
-        else if (this.velocityX > 0 && velocityX < 0)
-            this.velocityX = this.velocityX--;
-        if (this.velocityX < 2 && this.velocityX > 0)
-            this.velocityX = 2;
-        else if (this.velocityX > 10 && this.velocityX < 12)
-            this.velocityX = 10;
-
-        else if (!(this.velocityX < 5 && velocityX > 0))
-            this.velocityX = velocityX + deltaSpeed;
-        else if (!(this.velocityX < 5 && velocityX > 0))
-            this.velocityX = velocityX;
-        else if (!(this.velocityX < 0 && velocityX > 0))
-            this.velocityX = velocityX;
-        else if (!(this.velocityX < 5 && velocityX > 0))
-            this.velocityX = velocityX;
-
-        if (this.velocityX == 0 && velocityX == 5)
-            this.velocityX = velocityX;
-        else if (this.velocityX == 5 && velocityX == 5)
-            this.velocityX = velocityX + deltaSpeed;
-        else if (this.velocityX == 10 && velocityX == 0)
-            this.velocityX = velocityX;
-        else if (this.velocityX == 5 && velocityX == 0)
-            this.velocityX = velocityX;
-        else if (this.velocityX == 10 && velocityX == 5)
-            this.velocityX = velocityX;*/
     }
 
     public void setVelocityY(int velocityY) {
         if (!(velocityY > 0 && this.velocityY < 0) && !(velocityY < 0 && this.velocityY > 0)) {
             this.velocityY = velocityY;
         }
-        /*
-        if (this.velocityY < 0 && velocityY > 0)
-            this.velocityY = this.velocityY++;
-        else if (this.velocityY < 0 && velocityY < 0)
-            this.velocityY = this.velocityY--;
-        if (this.velocityY > -2 && this.velocityY < 0)
-            this.velocityY = -2;
-        else if (this.velocityY < -10 && this.velocityY > -12)
-            this.velocityY = -10;
-        if (this.velocityY > 0 && velocityY > 0)
-            this.velocityY = this.velocityY++;
-        else if (this.velocityY > 0 && velocityY < 0)
-            this.velocityY = this.velocityY--;
-        if (this.velocityY < 2 && this.velocityY > 0)
-            this.velocityY = 2;
-        else if (this.velocityY > 10 && this.velocityY < 12)
-            this.velocityY = 10;
-
-        else if (!(this.velocityY < 5 && velocityY > 0))
-            this.velocityY = velocityY + deltaSpeed;
-        else if (!(this.velocityY < 5 && velocityY > 0))
-            this.velocityY = velocityY;
-        else if (!(this.velocityY < 0 && velocityY > 0))
-            this.velocityY = velocityY;
-        else if (!(this.velocityY < 5 && velocityY > 0))
-            this.velocityY = velocityY;
-
-        if (this.velocityY == 0 && velocityY == 5)
-            this.velocityY = velocityY;
-        else if (this.velocityY == 5 && velocityY == 5)
-            this.velocityY = velocityY + deltaSpeed;
-        else if (this.velocityY == 10 && velocityY == 0)
-            this.velocityY = velocityY;
-        else if (this.velocityY == 5 && velocityY == 0)
-            this.velocityY = velocityY;
-        else if (this.velocityY == 10 && velocityY == 5)
-            this.velocityY = velocityY;*/
     }
 
     public void setBoundary(int xBoundary, int yBoundary) {
@@ -162,7 +104,6 @@ public abstract class Object {
         x += velocityX;
         y += velocityY;
 
-        //accelerate();
         clip();
     }
 
@@ -170,22 +111,30 @@ public abstract class Object {
     public void accelerate(int velocity) {
         if (velocity == 1)
             if (DIR == "LEFT")
-                this.velocityX = velocityX--;
+                this.velocityX = velocityX - 1;
             else if (DIR == "RIGHT")
-                this.velocityX = velocityX++;
+                this.velocityX = velocityX + 1;
             else if (DIR == "UP")
-                this.velocityY = velocityY++;
+                this.velocityY = velocityY + 1;
             else if (DIR == "DOWN")
-                this.velocityY = velocityY--;
+                this.velocityY = velocityY - 1;
         else if (velocity == -1)
             if (DIR == "LEFT")
-                this.velocityX = velocityX++;
+                this.velocityX = velocityX + 1;
             else if (DIR == "RIGHT")
-                this.velocityX = velocityX--;
+                this.velocityX = velocityX - 1;
             else if (DIR == "UP")
-                this.velocityY = velocityY--;
+                this.velocityY = velocityY - 1;
             else if (DIR == "DOWN")
-                this.velocityY = velocityY++;
+                this.velocityY = velocityY + 1;
+    }
+
+    public void setDirection(String Direction) {
+        DIR = Direction;
+    }
+
+    public String getDirection(){
+        return this.DIR;
     }
 
     // Check if player is in bounds
