@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.Random;
 import javax.swing.*;
 import java.util.ArrayList;
@@ -9,16 +10,17 @@ public class Map extends JComponent{
     LocalPlayer player; //= new LocalPlayer(200,200,0,0,Color.RED);
     //Player[] players;
     ArrayList<Player> players = new ArrayList<>();
+    ArrayList<OnlinePlayer> onlinePlayers = new ArrayList<>();
+    ArrayList<String> freshPlayers = new ArrayList<>();
     Color[] colors = {Color.CYAN, Color.PINK, Color.WHITE, Color.YELLOW,
             Color.BLUE, Color.ORANGE, Color.RED, Color.GREEN};
 
     Random rand = new Random();
 
-    // UPD
-    int PORT = 49152;
-    String ADDRESS = "228.5.6.7";
     String NAME;
-    String DIR;
+    Network server;
+    NetworkReader read = new NetworkReader(); // Initialise receiver thread class
+    NetworkSender send = new NetworkSender(); // Initialise broadcaster thread class
 
     // court dimensions
     int MAPWIDTH = 800;
@@ -40,7 +42,7 @@ public class Map extends JComponent{
     public Map(JLabel sco1, String name) {
         setBackground(Color.WHITE);
 
-        //this.players = new OnlinePlayer[p]; TODO: PUT BACK IN
+        //this.players = new OnlinePlayer[p];
         this.score1 = sco1;
         this.NAME = name;
 
@@ -67,27 +69,27 @@ public class Map extends JComponent{
                 if (!player.getAlive()) {
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_LEFT && player.getDirection() != "RIGHT") {
-                    player.setVelocityX(-1);
+                    player.setVelocityX(-5);
                     player.setVelocityY(0);
                     player.setDirection("LEFT");
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_RIGHT && player.getDirection() != "LEFT") {
-                    player.setVelocityX(1);
+                    player.setVelocityX(5);
                     player.setVelocityY(0);
                     player.setDirection("RIGHT");
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_UP && player.getDirection() != "DOWN") {
                     player.setVelocityX(0);
-                    player.setVelocityY(-1);
+                    player.setVelocityY(-5);
                     player.setDirection("UP");
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_DOWN && player.getDirection() != "UP") {
                     player.setVelocityX(0);
-                    player.setVelocityY(1);
+                    player.setVelocityY(5);
                     player.setDirection("DOWN");
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                    player.setjetWall();
+                    player.changeJetWall();
                 }
                 else if (e.getKeyCode() == KeyEvent.VK_W) {
                     player.accelerate(1);
@@ -156,6 +158,14 @@ public class Map extends JComponent{
             //addPlayers();
             //player.clip();
         }
+        for (int i = 0; i < onlinePlayers.size(); ++i) {
+            onlinePlayers.get(i).setBoundary(getWidth(), getHeight());
+            int x = onlinePlayers.get(i).getX();
+            int y = onlinePlayers.get(i).getY();
+            onlinePlayers.get(i).changePosition(x, y);
+            //addPlayers();
+            //player.clip();
+        }
         /*for (Player k1: players) {
             for (Player k2: players) {
                 //k1.crash(k1.intersects(k2));
@@ -202,18 +212,43 @@ public class Map extends JComponent{
 
     // Starts game add players etc.
     public void startGame() throws Exception{
+        String randomDirection = "";
         int[] start = getRandomStart();
         if (start[4] == 1)
-            DIR = "RIGHT";
+            randomDirection = "RIGHT";
         else if (start[4] == 2)
-            DIR = "LEFT";
+            randomDirection = "LEFT";
         else if (start[4] == 3)
-            DIR = "UP";
+            randomDirection = "UP";
         else if (start[4] == 4)
-            DIR = "DOWN";
-        player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0], NAME, DIR);
-        //players[0] = player; TODO: PUT BACK IN
-        players.add(player);
+            randomDirection = "DOWN";
+        player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0], NAME, randomDirection,true);
+        //players[0] = player;
+        //players.add(player);
+        server = new Network("238.254.254.254", 45565);
+        String request = NAME + player.getX() + player.getY() + player.isJetWall();
+        server.send("238.254.254.254", 45565, "Add Player," + request);
+        String message = server.read();
+        boolean gameStart = false;
+        while (!(gameStart))
+            if (message == "JOINED") {
+                message = server.listen();
+                if (message == "START") { // TODO: fix this loop
+                    read.start();
+                    send.start();
+                }
+                else if (message == "PLAYERS") {
+                    message = server.listen();
+                    addPlayers(message);
+                }
+                else {
+                    message = server.read();
+                }
+            }
+            else
+                message = server.read();
+                //get name again? TODO: check get name again shit
+
         //runNetwork();
         /*Network multi = new Network(PORT);
         multi.sendRequest(NAME,"READY", PORT);
@@ -224,8 +259,8 @@ public class Map extends JComponent{
     }
 
 //    public void runNetwork(){
-//        NetworkWorker receive = new NetworkWorker(PORT);
-//        receive.start();
+//        read.start();
+//        send.start();
 //    }
 
     // changes the score being displayed
@@ -258,9 +293,9 @@ public class Map extends JComponent{
         super.paintComponent(g);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, MAPWIDTH, MAPHEIGHT);
-        if (player != null) {
-            player.draw(g);
-        }
+//        if (player != null) {
+//            player.draw(g);
+//        }
         for (Player p: players) {
             if (p != null) {
                 p.draw(g);
@@ -268,7 +303,27 @@ public class Map extends JComponent{
         }
     }
 
-    public void addPlayers() {
+    public void addPlayers(String playerString) {
+        String [] playersArray = playerString.split(" ");
+        String name;
+        int x;
+        int y;
+        boolean jetwallStatus;
+        for (int i = 0; i < playersArray.length; i++) {
+            if (!(playersArray[i].equals(NAME))) {
+                String[] playerAttributes = playersArray[i].split(",");
+                name = playerAttributes[0];
+                x = Integer.parseInt(playerAttributes[1]);
+                y = Integer.parseInt(playerAttributes[2]);
+                jetwallStatus = true;
+                OnlinePlayer player = new OnlinePlayer(x, y, 0, 0, colors[i], "", name, jetwallStatus); // TODO: finish this maybe change player attributes a little
+                onlinePlayers.add(player);
+            }
+        }
+
+                //addPlayers();
+                //player.clip();
+
 //        int[] start = getRandomStart();
 //        LocalPlayer player = new LocalPlayer(
 //                start[0], start[1], start[2], start[3], colors[0]);
@@ -292,5 +347,83 @@ public class Map extends JComponent{
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(MAPWIDTH, MAPHEIGHT);
+    }
+
+    public class NetworkSender implements Runnable{
+        private boolean running;
+
+        private synchronized void start() {
+            if(running) return;
+
+            Thread sendThread = new Thread(this);
+            sendThread.start();
+            running = true;
+        }
+
+        void stop() throws Exception {
+            if (!running) return;
+
+            server.close();
+            running = false;
+        }
+
+        public void run() {
+            while(running) {
+                try {
+                    String request = NAME + "," + player.getX() + "," + player.getY() + "," + player.isJetWall();
+                    server.send("238.254.254.254", 45565, request);
+                }
+                catch (Exception error){
+                    error.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public class NetworkReader implements Runnable {
+        private boolean running;
+
+        private synchronized void start() {
+            if(running) return;
+
+            Thread broadcastThread = new Thread(this);
+            broadcastThread.start();
+            running = true;
+        }
+
+        void stop() throws Exception {
+            if (!running) return;
+
+            server.close();
+            running = false;
+        }
+
+        public void run() {
+            int index = 0;
+
+            while(running){
+                try {
+                    String command = server.listen();
+                    String[] newPlayers = command.split(" ");
+                    String[] attributes = {};
+                    for (int p = 0; p < onlinePlayers.size(); p++) {
+                        attributes = newPlayers[p].split(",");
+                        int x = Integer.parseInt(attributes[1]);
+                        int y = Integer.parseInt(attributes[2]);
+                        boolean jetwallStatus;
+                        if (attributes[3] == "yes")
+                            jetwallStatus = true;
+                        else
+                            jetwallStatus = false;
+                        onlinePlayers.get(p).setX(x);
+                        onlinePlayers.get(p).setY(y);
+                        onlinePlayers.get(p).setjetWall(jetwallStatus);
+                    }
+                }
+                catch(IOException error) {
+
+                }
+            }
+        }
     }
 }
