@@ -7,11 +7,9 @@ import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class Map extends JComponent{
-    LocalPlayer player; //= new LocalPlayer(200,200,0,0,Color.RED);
-    //Player[] players;
+    LocalPlayer player;
     ArrayList<Player> players = new ArrayList<>();
     ArrayList<OnlinePlayer> onlinePlayers = new ArrayList<>();
-    ArrayList<String> freshPlayers = new ArrayList<>();
     Color[] colors = {Color.CYAN, Color.PINK, Color.WHITE, Color.YELLOW,
             Color.BLUE, Color.ORANGE, Color.RED, Color.GREEN};
 
@@ -42,14 +40,13 @@ public class Map extends JComponent{
     public Map(JLabel sco1, String name) {
         setBackground(Color.WHITE);
 
-        //this.players = new OnlinePlayer[p];
         this.score1 = sco1;
         this.NAME = name;
 
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
         setFocusable(true);
 
-        // timer that runs the game
+        // Timer
         time = new Timer(interval, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
@@ -62,8 +59,7 @@ public class Map extends JComponent{
         });
         time.start();
 
-
-        // player one controls
+        // Local Player Controls
         addKeyListener(new KeyAdapter() {
             public void keyPressed(KeyEvent e) {
                 if (!player.getAlive()) {
@@ -105,15 +101,13 @@ public class Map extends JComponent{
     }
 
 
-
-
     // returns an array of velocities and dimensions for a Player
     // ensures that the Player moves toward the center initially
     public int[] getRandomStart() {
         int[] start = new int[5];
         int direction;
-        int xnew = 50 + rand.nextInt(600);
-        int ynew = 50 + rand.nextInt(600);
+        int xnew = 50 + rand.nextInt(800);
+        int ynew = 50 + rand.nextInt(800);
         int ra = rand.nextInt(2);
         int velx = 0;
         int vely = 0;
@@ -147,53 +141,56 @@ public class Map extends JComponent{
         return VELOCITY;
     }
 
-    // moves the game by one timestamp
+    // Tick is the Games Unit of Time
     void tick() throws Exception{
         if(players.isEmpty()) {
             startGame();
         }
         for (int i = 0; i < players.size(); ++i) {
-            players.get(i).setBoundary(getWidth(), getHeight());
-            players.get(i).move();
-            //addPlayers();
-            //player.clip();
+            if (players.get(i).getAlive()) {
+                players.get(i).setBoundary(getWidth(), getHeight());
+                players.get(i).move();
+                players.get(i).clip();
+            }
+            else if (!(players.get(i).getAlive())) {
+                server.send("238.254.254.254", 45565, NAME + "DEAD");
+            }
         }
         for (int i = 0; i < onlinePlayers.size(); ++i) {
             onlinePlayers.get(i).setBoundary(getWidth(), getHeight());
             int x = onlinePlayers.get(i).getX();
             int y = onlinePlayers.get(i).getY();
             onlinePlayers.get(i).changePosition(x, y);
-            //addPlayers();
-            //player.clip();
+            onlinePlayers.get(i).clip();
         }
-        /*for (Player k1: players) {
-            for (Player k2: players) {
-                //k1.crash(k1.intersects(k2));
-            }
-        }
-        if (!localPlayer.getAlive()) {
-            timer.stop();
-            run = false;
-            //addScore();
-            setScore();
-        }
-        else {
-            int check = 0;
-            for (Player k: players) {
-                if (!k.getAlive()) {
-                    check++;
-                }
-            }
-            if (check == players.length - 1) {
-                run = false;
-                timer.stop();
-                //addScore();
-                setScore();
-            } else {
-                run = true;
-                setScore();
-            }
-        }*/
+//        for (Player k1: players) {
+//            for (Player k2: players) {
+//                //k1.crash(k1.intersects(k2));
+//            }
+//        }
+//        if (!localPlayer.getAlive()) {
+//            timer.stop();
+//            run = false;
+//            //addScore();
+//            setScore();
+//        }
+//        else {
+//            int check = 0;
+//            for (Player k: players) {
+//                if (!k.getAlive()) {
+//                    check++;
+//                }
+//            }
+//            if (check == players.length - 1) {
+//                run = false;
+//                timer.stop();
+//                //addScore();
+//                setScore();
+//            } else {
+//                run = true;
+//                setScore();
+//            }
+//        }
         repaint();
     }
 
@@ -223,8 +220,7 @@ public class Map extends JComponent{
         else if (start[4] == 4)
             randomDirection = "DOWN";
         player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0], NAME, randomDirection,true);
-        //players[0] = player;
-        //players.add(player);
+        players.add(player);
         server = new Network("238.254.254.254", 45565);
         String request = NAME + player.getX() + player.getY() + player.isJetWall();
         server.send("238.254.254.254", 45565, "Add Player," + request);
@@ -249,19 +245,7 @@ public class Map extends JComponent{
                 message = server.read();
                 //get name again? TODO: check get name again shit
 
-        //runNetwork();
-        /*Network multi = new Network(PORT);
-        multi.sendRequest(NAME,"READY", PORT);
-        while (!run)
-            multi.receiveCommand(PORT);
-            //if (buffer == "START") TODO: try get buffer from network to process string
-*/
     }
-
-//    public void runNetwork(){
-//        read.start();
-//        send.start();
-//    }
 
     // changes the score being displayed
     public void setScore(){
@@ -293,10 +277,10 @@ public class Map extends JComponent{
         super.paintComponent(g);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, MAPWIDTH, MAPHEIGHT);
-//        if (player != null) {
-//            player.draw(g);
-//        }
-        for (Player p: players) {
+        if (player != null) {
+            player.draw(g);
+        }
+        for (Player p: onlinePlayers) {
             if (p != null) {
                 p.draw(g);
             }
@@ -320,27 +304,6 @@ public class Map extends JComponent{
                 onlinePlayers.add(player);
             }
         }
-
-                //addPlayers();
-                //player.clip();
-
-//        int[] start = getRandomStart();
-//        LocalPlayer player = new LocalPlayer(
-//                start[0], start[1], start[2], start[3], colors[0]);
-//        players[0] = player;
-//        for (int j = 1; j < players.length; j++) {
-//            start = getRandomStart();
-//            players[j] = new OnlinePlayer(start[0], start[1],
-//                    start[2], start[3], colors[j]);
-//        }
-//        for (Player p: players) {
-//            p.addPlayers(players);
-//        }
-    }
-
-    public void ProcessCommands(){
-        //Message Format: name,x,y,wall
-
     }
 
     // sets the dimensions of the court
