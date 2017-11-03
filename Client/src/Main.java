@@ -15,7 +15,7 @@ public class Main implements Runnable{
         frame.setBackground(Color.BLACK);
         frame.setMinimumSize(new Dimension(800, 800));
         //Dimension dMAX = frame.getMaximumSize();
-        frame.setPreferredSize(new Dimension(800, 1000));
+        frame.setPreferredSize(new Dimension(800, 850));
 
         ////////////////
         // MAIN PANEL //
