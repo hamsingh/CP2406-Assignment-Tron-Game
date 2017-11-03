@@ -24,14 +24,28 @@ public abstract class Player extends Object {
     ArrayList<Shape> lines = new ArrayList<Shape>();
 
     // Default Constructor
-    public Player(int randX, int randY, int velocityX, int velocityY, Color color, String DIR) {
+    public Player(int randX, int randY, int velocityX, int velocityY, Color color, String DIR, boolean jetWall) {
         super(randX, randY, velocityX, velocityY, WIDTH, HEIGHT, DIR);
         initialVelocity = Math.max(Math.abs(velocityX), Math.abs(velocityY));
         this.color = color;
+        this.jetWall = jetWall;
+    }
+
+    public String isJetWall() {
+        String jetwallStatus = "";
+        if (jetWall)
+            jetwallStatus = "yes";
+        else if (!(jetWall))
+            jetwallStatus = "no";
+        return jetwallStatus;
     }
 
     // Changes State of Players Jet Wall
-    public void setjetWall() {
+    public void setjetWall(boolean jetWall) {
+        this.jetWall = jetWall;
+    }
+
+    public void changeJetWall() {
         if (jetWall) {
             jetWall = false;
         }
@@ -39,18 +53,6 @@ public abstract class Player extends Object {
             jetWall = true;
         }
     }
-
-    // Accelerates player
-    /*public void accelerate() {
-        if (!(this.velocityX < 0 || this.velocityX > 10))
-            this.velocityX = this.velocityX++;
-        else if (!(this.velocityY < 0 || this.velocityY > 10))
-            this.velocityY = this.velocityY++;
-        else if (this.velocityX > 10)
-            this.velocityX = 10;
-        else if (this.velocityY > 10)
-            this.velocityY = 10;
-    }*/
 
     // Changes Player State if it Exits Map Boundary
     public void clip() {
@@ -76,14 +78,6 @@ public abstract class Player extends Object {
                 k.draw(g);
             }
         }
-    }
-
-    public void setDirection(String Direction) {
-        DIR = Direction;
-    }
-
-    public String getDirection(){
-        return this.DIR;
     }
 
     public boolean getAlive() {
