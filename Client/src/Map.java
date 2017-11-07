@@ -53,7 +53,7 @@ public class Map extends JComponent{
                     tick();
                 }
                 catch(Exception error){
-                    System.out.println("Error with Tick Exception");
+                    System.out.println(error);
                 }
             }
         });
@@ -219,32 +219,30 @@ public class Map extends JComponent{
             randomDirection = "UP";
         else if (start[4] == 4)
             randomDirection = "DOWN";
-        player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[0], NAME, randomDirection,true);
+        player = new LocalPlayer(start[0], start[1], start[2], start[3], colors[7], NAME, randomDirection,true);
         players.add(player);
         server = new Network("238.254.254.254", 45565);
-        String request = NAME + player.getX() + player.getY() + player.isJetWall();
-        server.send("238.254.254.254", 45565, "Add Player," + request);
+        String serverInfo = server.listen();
+        String [] serverInformation = serverInfo.split(",");
+        String serverIP = serverInformation[0];
+        int serverPort = Integer.parseInt(serverInformation[1]);
+        String request = NAME + "," + player.getX() + "," + player.getY() + "," + player.isJetWall();
+        server.send(serverIP, serverPort, "Add Player," + request);
         String message = server.read();
+        System.out.println(message);
         boolean gameStart = false;
-        while (!(gameStart))
-            if (message == "JOINED") {
-                message = server.listen();
-                if (message == "START") { // TODO: fix this loop
-                    read.start();
-                    send.start();
-                }
-                else if (message == "PLAYERS") {
-                    message = server.listen();
-                    addPlayers(message);
-                }
-                else {
-                    message = server.read();
-                }
-            }
-            else
+        while (!(gameStart)) {
+            message = server.read();
+            if (message.equals("JOINED")) {
                 message = server.read();
-                //get name again? TODO: check get name again shit
-
+                addPlayers(message);
+            }
+            else if (message.equals("START")) {
+                read.start();
+                send.start();
+                gameStart = true;
+            }
+        }
     }
 
     // changes the score being displayed
@@ -302,6 +300,7 @@ public class Map extends JComponent{
                 jetwallStatus = true;
                 OnlinePlayer player = new OnlinePlayer(x, y, 0, 0, colors[i], "", name, jetwallStatus); // TODO: finish this maybe change player attributes a little
                 onlinePlayers.add(player);
+                server.send
             }
         }
     }
@@ -331,6 +330,7 @@ public class Map extends JComponent{
         }
 
         public void run() {
+            System.out.println("Network Sender Started");
             while(running) {
                 try {
                     String request = NAME + "," + player.getX() + "," + player.getY() + "," + player.isJetWall();
@@ -365,6 +365,7 @@ public class Map extends JComponent{
             int index = 0;
 
             while(running){
+                System.out.println("Network Reader Started");
                 try {
                     String command = server.listen();
                     String[] newPlayers = command.split(" ");
