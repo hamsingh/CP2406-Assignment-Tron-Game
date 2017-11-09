@@ -29,6 +29,7 @@ public class Map extends JComponent{
 
     // score and score labels
     int i = 0;
+
     JLabel score1;
 
     // the game timer and speed at which tick() is called
@@ -37,11 +38,11 @@ public class Map extends JComponent{
     boolean run = true;
 
     // constructor adds KeyListeners and initializes fields
-    public Map(JLabel sco1, String name) {
+    public Map(JLabel sco1, String NAME) {
         setBackground(Color.WHITE);
 
         this.score1 = sco1;
-        this.NAME = name;
+        this.NAME = NAME;
 
         setBorder(BorderFactory.createLineBorder(Color.BLACK));
         setFocusable(true);
@@ -247,10 +248,7 @@ public class Map extends JComponent{
 
     // changes the score being displayed
     public void setScore(){
-//        score1.setText("     Score: " + i +
-//                "    Level: " + (players.length - 1));
-//        //score2.setText("             Boost: " + localPlayer.getBoostsLeft());
-//        score1.repaint();
+
     }
 
     // updates the player's score after successfully completing a level
@@ -278,9 +276,11 @@ public class Map extends JComponent{
         if (player != null) {
             player.draw(g);
         }
-        for (Player p: onlinePlayers) {
-            if (p != null) {
-                p.draw(g);
+        if (onlinePlayers != null) {
+            for (Player p: onlinePlayers) {
+                if (p != null) {
+                    p.draw(g);
+                }
             }
         }
     }
@@ -300,7 +300,7 @@ public class Map extends JComponent{
                 jetwallStatus = true;
                 OnlinePlayer player = new OnlinePlayer(x, y, 0, 0, colors[i], "", name, jetwallStatus); // TODO: finish this maybe change player attributes a little
                 onlinePlayers.add(player);
-                server.send
+                //server.send
             }
         }
     }
@@ -316,7 +316,7 @@ public class Map extends JComponent{
 
         private synchronized void start() {
             if(running) return;
-
+            System.out.println("Network Sender Started");
             Thread sendThread = new Thread(this);
             sendThread.start();
             running = true;
@@ -330,7 +330,6 @@ public class Map extends JComponent{
         }
 
         public void run() {
-            System.out.println("Network Sender Started");
             while(running) {
                 try {
                     String request = NAME + "," + player.getX() + "," + player.getY() + "," + player.isJetWall();
@@ -348,7 +347,7 @@ public class Map extends JComponent{
 
         private synchronized void start() {
             if(running) return;
-
+            System.out.println("Network Reader Started");
             Thread broadcastThread = new Thread(this);
             broadcastThread.start();
             running = true;
@@ -365,7 +364,6 @@ public class Map extends JComponent{
             int index = 0;
 
             while(running){
-                System.out.println("Network Reader Started");
                 try {
                     String command = server.listen();
                     String[] newPlayers = command.split(" ");
