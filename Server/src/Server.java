@@ -60,13 +60,13 @@ public class Server{
                 myServerInfo.stop();
                 for (int x = 0; x < numberPlayers; x++) {
                     server.send(playerIPs.get(x),Integer.parseInt(playerPorts.get(x)),players.toString());
-                    String reply = server.read();
-                    if (reply == "PLAYERS ADDED"){
-                        break;
-                    }
-                    else {
-                        server.send(playerIPs.get(x),Integer.parseInt(playerPorts.get(x)),players.toString());
-                    }
+//                    String reply = server.read();
+//                    if (reply == "PLAYERS ADDED"){
+//                        break;
+//                    }
+//                    else {
+//                        server.send(playerIPs.get(x),Integer.parseInt(playerPorts.get(x)),players.toString());
+//                    }
                 }
             }
             playersConnecting = false;
