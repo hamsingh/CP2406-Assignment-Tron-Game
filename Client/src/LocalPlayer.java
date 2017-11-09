@@ -3,14 +3,9 @@ import java.awt.Color;
 public class LocalPlayer extends Player {
     String NAME;
 
-    public LocalPlayer(int randX, int randY, int velocityX, int velocityY, Color color, String NAME, String DIR){
-        super(randX, randY, velocityX, velocityY, color, DIR);
+    public LocalPlayer(int randX, int randY, int velocityX, int velocityY, Color color, String NAME, String DIR, Boolean jetWall){
+        super(randX, randY, velocityX, velocityY, color, DIR, jetWall);
         this.NAME = NAME;
-    }
-
-    // does nothing because local player can see screen
-    // only needed for online players, but required for abstract class
-    public void addPlayers(Player[] players) {
     }
 
     public void move() {
