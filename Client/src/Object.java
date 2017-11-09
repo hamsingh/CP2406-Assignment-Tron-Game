@@ -7,8 +7,8 @@ public abstract class Object {
     int y;
 
     // Game Zone
-    int width;
-    int height;
+    int width = 800;
+    int height = 800;
 
     // Velocity in pixels per move
     int velocityX;
