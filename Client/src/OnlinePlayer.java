@@ -6,24 +6,27 @@ public class OnlinePlayer extends Player {
     private Player[] players = new Player[1];
 
     private Random rand = new Random();
+    String NAME;
 
-    public OnlinePlayer(int x, int y, int velocityX, int velocityY, Color color, String DIR){
-        super(x, y, velocityX, velocityY, color, DIR);
+    public OnlinePlayer(int x, int y, int velocityX, int velocityY, Color color, String DIR, String name, boolean jetWall){
+        super(x, y, velocityX, velocityY, color, DIR, jetWall);
+        this.NAME = name;
     }
 
     // does nothing because human players can see screen
-    // only needed for AI, but required for abstract class
-    public void addPlayers(Player[] players) {
-        this.players = players;
+    // only needed for AI, but required for
+    // abstract class
+    public void move(){
+
     }
 
-    public void move() {
+    public void changePosition(int xNew, int yNew) {
         int a = x;
         int b = y;
 
         if (jetWall) {
-            x += velocityX;
-            y += velocityY;
+            x = xNew;
+            y = yNew;
             if (lines.size() > 1) {
                 Shape l1 = lines.get(lines.size() - 2);
                 Shape l2 = lines.get(lines.size() - 1);
