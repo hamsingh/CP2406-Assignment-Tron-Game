@@ -7,7 +7,8 @@ public class Main implements Runnable{
 
     String userName;
     final JTextField name = new JTextField("Please Enter Your Name");
-    Map testLevel;
+    Map multiPlayer;
+    LocalMultiPlayer threePlayer;
 
     public void run() {
         // Main Frame
@@ -73,17 +74,38 @@ public class Main implements Runnable{
 
         // Panel for Play Menu Buttons
         final JPanel playButtons = new JPanel();
-        playButtons.setLayout(new GridLayout(1, 3));
+        playButtons.setLayout(new GridLayout(2, 1));
         playButtons.setBackground(Color.BLACK);
+
+        // Add Play Menu Buttons
+        final JButton localMultiButton = new JButton("Play Three Player");
+        playButtons.add(localMultiButton);
+        final JButton onlineButton = new JButton("Play Online");
+        playButtons.add(onlineButton);
+
+        playMenu.add(playButtons, BorderLayout.CENTER);
+
+
+        //////////////////
+        // ONLINE PANEL //
+        //////////////////
+        final JPanel onlineMenu = new JPanel();
+        onlineMenu.setLayout(new BorderLayout());
+        onlineMenu.setBackground(Color.BLACK);
+
+        // Panel for Play Menu Buttons
+        final JPanel onlineButtons = new JPanel();
+        onlineButtons.setLayout(new GridLayout(2, 1));
+        onlineButtons.setBackground(Color.BLACK);
 
         // Add Play Menu Buttons
         // buttons for playMenuUpper
         final JButton joinButton = new JButton("JOIN");
-        playButtons.add(joinButton);
+        onlineButtons.add(joinButton);
         // Input Name
-        playButtons.add(name);
+        onlineButtons.add(name);
 
-        playMenu.add(playButtons, BorderLayout.CENTER);
+        onlineMenu.add(onlineButtons, BorderLayout.CENTER);
 
         ////////////////////////
         // INSTRUCTIONS PANEL //
@@ -101,17 +123,37 @@ public class Main implements Runnable{
         testLevelMenu.setBackground(Color.BLACK);
 
         // Score Label
-        final JLabel score = new JLabel("   Score: 0");
-        score.setForeground(Color.WHITE);
-        score.setBackground(Color.BLACK);
-        testLevelMenu.add(score);
+        final JLabel multiscore = new JLabel("   Score: 0");
+        multiscore.setForeground(Color.WHITE);
+        multiscore.setBackground(Color.BLACK);
+        testLevelMenu.add(multiscore);
 
 
         // Restart and Exit Buttons
         final JButton resetButton = new JButton("RESTART");
         testLevelMenu.add(resetButton);
-        final JButton exitButton = new JButton("EXIT");
-        testLevelMenu.add(exitButton);
+        final JButton multiexitButton = new JButton("EXIT");
+        testLevelMenu.add(multiexitButton);
+
+        ///////////////////////
+        // THREE PLAYER MENU //
+        ///////////////////////
+        final JPanel threeMenu = new JPanel();
+        threeMenu.setLayout(new GridLayout(1,3));
+        threeMenu.setBackground(Color.BLACK);
+
+        // Score Label
+        final JLabel score = new JLabel("   Score: 0");
+        score.setForeground(Color.WHITE);
+        score.setBackground(Color.BLACK);
+        threeMenu.add(score);
+
+
+        // Restart and Exit Buttons
+        final JButton threeresetButton = new JButton("RESTART");
+        threeMenu.add(threeresetButton);
+        final JButton threeexitButton = new JButton("EXIT");
+        threeMenu.add(threeexitButton);
 
 
         /////////////////////
@@ -156,20 +198,45 @@ public class Main implements Runnable{
             }
         });
 
+        onlineButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.remove(playMenu);
+                frame.add(onlineMenu);
+                frame.update(frame.getGraphics());
+                onlineMenu.revalidate();
+            }
+        });
+
+        localMultiButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Create Test Level
+                threePlayer = new LocalMultiPlayer(score);
+                threePlayer.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+                frame.remove(playMenu);
+                frame.setLayout(new BorderLayout());
+                frame.add(threePlayer, BorderLayout.CENTER);
+                frame.add(threeMenu, BorderLayout.SOUTH);
+                frame.update(frame.getGraphics());
+                threePlayer.requestFocusInWindow();
+                threePlayer.revalidate();
+                threePlayer.reset();
+            }
+        });
+
         joinButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (getName() != "") {
-                    testLevel = new Map(score, userName);
+                    multiPlayer = new Map(score, userName);
                     // Create Test Level
-                    testLevel.setBorder(BorderFactory.createLineBorder(Color.WHITE));
-                    frame.remove(playMenu);
+                    multiPlayer.setBorder(BorderFactory.createLineBorder(Color.WHITE));
+                    frame.remove(onlineMenu);
                     frame.setLayout(new BorderLayout());
-                    frame.add(testLevel, BorderLayout.CENTER);
+                    frame.add(multiPlayer, BorderLayout.CENTER);
                     frame.add(testLevelMenu, BorderLayout.SOUTH);
                     frame.update(frame.getGraphics());
-                    testLevel.requestFocusInWindow();
-                    testLevel.revalidate();
-                    testLevel.reset();
+                    multiPlayer.requestFocusInWindow();
+                    multiPlayer.revalidate();
+                    multiPlayer.reset();
                 }
                 else {
                     JOptionPane.showMessageDialog(frame, "Please Enter Name");
@@ -177,10 +244,20 @@ public class Main implements Runnable{
             }
         });
 
-        exitButton.addActionListener(new ActionListener() {
+        multiexitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 frame.remove(testLevelMenu);
-                frame.remove(testLevel);
+                frame.remove(multiPlayer);
+                frame.add(mainMenu);
+                frame.update(frame.getGraphics());
+                mainMenu.revalidate();
+            }
+        });
+
+        threeexitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                frame.remove(threeMenu);
+                frame.remove(threePlayer);
                 frame.add(mainMenu);
                 frame.update(frame.getGraphics());
                 mainMenu.revalidate();
@@ -189,7 +266,13 @@ public class Main implements Runnable{
 
         resetButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                testLevel.reset();
+                multiPlayer.reset();
+            }
+        });
+
+        threeresetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                threePlayer.reset();
             }
         });
 
