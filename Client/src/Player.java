@@ -56,11 +56,11 @@ public abstract class Player extends Object {
 
     // Changes Player State if it Exits Map Boundary
     public void clip() {
-        if (x < 0 || x > width) {
+        if (x < 0 || x > 800) {
             velocityX = 0;
             alive = false;
         }
-        if (y < 0 || y > height) {
+        else if (y < 0 || y > 800) {
             velocityY = 0;
             alive = false;
         }
@@ -96,8 +96,5 @@ public abstract class Player extends Object {
             alive = false;
         }
     }
-
-    // adds Player objects to the field
-    abstract void addPlayers(Player[] players);
 }
 
